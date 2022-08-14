@@ -34,6 +34,7 @@ const Account = () => {
     activate(injectedConnector, undefined, true).catch((error) => {
       // ignore the error if it's a user rejected request
       if (error instanceof UserRejectedRequestError) {
+        alert("User rejected request")
         setConnecting(false);
       } else {
         setError(error);
