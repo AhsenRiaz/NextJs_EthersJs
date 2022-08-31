@@ -46,8 +46,6 @@ export default function useMetaMaskOnboarding() {
     }
   }
 
-  // const isWeb3Available = typeof window !== "undefined" && window?.ethereum;
-
   return {
     startOnboarding,
     stopOnboarding,

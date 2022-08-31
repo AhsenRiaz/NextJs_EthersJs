@@ -1,7 +1,8 @@
+import { useEffect, useState } from "react";
+import { Container, Text, Row, Button } from "@nextui-org/react";
 import { useWeb3React } from "@web3-react/core";
 import { UserRejectedRequestError } from "@web3-react/injected-connector";
-import { useEffect, useState } from "react";
-import { injectedConnector } from "../utils/connectors";
+import { injectedConnector } from "../utils/etherjsConnection/connectors";
 import useMetaMaskOnboarding from "../hooks/useMetaMaskOnBoarding";
 
 const Account = () => {
@@ -34,7 +35,7 @@ const Account = () => {
     activate(injectedConnector, undefined, true).catch((error) => {
       // ignore the error if it's a user rejected request
       if (error instanceof UserRejectedRequestError) {
-        alert("User rejected request")
+        alert("User rejected request");
         setConnecting(false);
       } else {
         setError(error);
@@ -44,22 +45,30 @@ const Account = () => {
 
   if (typeof account !== "string") {
     return (
-      <div>
+      <>
         {isWeb3Available ? (
-          <button disabled={connecting} onClick={activateWallet}>
+          <Button
+            color={"gradient"}
+            disabled={connecting}
+            onClick={activateWallet}
+          >
             {isMetaMaskInstalled ? "Connect to MetaMask" : "Connect to Wallet"}
-          </button>
+          </Button>
         ) : (
-          <button onClick={startOnboarding}>Install Metamask</button>
+          <Button color={"gradient"} onClick={startOnboarding}>
+            Install Metamask
+          </Button>
         )}
-      </div>
+      </>
     );
   }
 
   return (
-    <h4>
-      {account.slice(0, 5)}...{account.slice(38)}{" "}
-    </h4>
+    <>
+      <Button color={"gradient"}>
+        {account.slice(0, 5)}...{account.slice(38)}
+      </Button>
+    </>
   );
 };
 
