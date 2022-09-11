@@ -1,12 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {} from "../../../types/ethers-contracts/index";
+import { NFT } from "../../../types/ethers-contracts/index";
 
 interface IInitialState {
-  
+  nftRevealContract: NFT | null;
 }
 
 const initialState: IInitialState = {
-
+  nftRevealContract: null,
 };
 
 const loadContracts = createSlice({
@@ -16,13 +16,10 @@ const loadContracts = createSlice({
     loadContract(state, action) {
       console.log("payload", action.payload);
       const {
-        payload: {
-          contractA,
-         
-        },
+        payload: { nftRevealContract },
       } = action;
-      if (contractA) {
-
+      if (nftRevealContract) {
+        state.nftRevealContract = nftRevealContract;
       }
     },
   },

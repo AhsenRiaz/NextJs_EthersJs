@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
-import { Container, Text, Row, Button } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { useWeb3React } from "@web3-react/core";
 import { UserRejectedRequestError } from "@web3-react/injected-connector";
 import { injectedConnector } from "../utils/etherjsConnection/connectors";
 import useMetaMaskOnboarding from "../hooks/useMetaMaskOnBoarding";
+import { NFT_Reveal_Address, NFT_Reveal_ABI } from "../ABIs/contracts";
+import { ethers } from "ethers";
+import { getSigner } from "../utils/etherjsConnection/signer";
+import { useAppDispatch } from "../redux/store";
+import { loadContract } from "../redux/slices/loadContracts/loadContracts";
 
 const Account = () => {
+  const dispatch = useAppDispatch();
   const { active, error, activate, chainId, account, setError } =
     useWeb3React();
 
@@ -16,9 +22,39 @@ const Account = () => {
     stopOnboarding,
   } = useMetaMaskOnboarding();
 
+  // initialize Contracts
+  const initializeContracts = async () => {
+    try {
+      const signer = await getSigner();
+      let nftRevealContract = new ethers.Contract(
+        NFT_Reveal_Address,
+        NFT_Reveal_ABI,
+        signer
+      );
+
+      return {
+        nftRevealContract,
+      };
+    } catch (error) {
+      console.log("Error in initializing contracts", error);
+    }
+  };
+
   // manage connecting state for injected connector
   const [connecting, setConnecting] = useState(false);
   useEffect(() => {
+    if (account !== null && account !== undefined) {
+      (async function () {
+        const contracts = await initializeContracts();
+        if (contracts) {
+          dispatch(
+            loadContract({
+              nftRevealContract: contracts.nftRevealContract,
+            })
+          );
+        }
+      })();
+    }
     if (active || error) {
       setConnecting(false);
       stopOnboarding();
